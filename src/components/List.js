@@ -1,9 +1,9 @@
-const List  = () => {
+const List = ({ title }) => {
   return(
     <div className="list">
       <div className="row">
-        <h2 className="text-white title">Netflix</h2>
-        <div className="col-xs">
+        <h2 className="text-white title">{ title }</h2>
+        <div className="col">
           <div className="row__posters">
             <img
               className="row__poster row__posterLarge"
