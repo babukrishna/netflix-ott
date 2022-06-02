@@ -21,13 +21,13 @@ function App() {
           <Route path="/login" element={
             <React.Fragment>
               <Header/>
-              <Login page={true}/>
+              <Login/>
             </React.Fragment>
           }/>
           <Route path="/register" element={
             <React.Fragment>
               <Header/>
-              <Login page={false}/>
+              <Login/>
             </React.Fragment>
           }/>
           <Route path="/dashboard" element={

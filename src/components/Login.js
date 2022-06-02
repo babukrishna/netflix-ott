@@ -1,30 +1,51 @@
 import { useNavigate, Link, useLocation } from "react-router-dom";
 import { initializeApp } from 'firebase/app';
-import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
+import { getAuth, 
+  signInWithEmailAndPassword,
+  createUserWithEmailAndPassword
+} from "firebase/auth";
 import { firebaseConfig } from './firebaseConfig.js'
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
-const Login = ({ page }) => {
+const Login = () => {
   initializeApp(firebaseConfig);
-  const location = useLocation();
   const navigate = useNavigate();
+  const location = useLocation();
+  const page = location.pathname === '/login' ? true:false;
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [ isUserExist, setUserExist ] = useState(false);
-  console.log(location);
+  const [ isEmailUsed, setIsEmailUsed] = useState(false);
   const auth = getAuth();
-  const onSignInClickHandler = (e) => {
+
+  const ctaClickHandler = (e) => {
     e.preventDefault();
-    signInWithEmailAndPassword(auth, email, password)
-    .then( auth => {
-      if(auth){
-        navigate('/dashboard');
-      }
-    })
-    .catch( error => setUserExist(true));
-    // user-not-found
+
+    if(page){
+      signInWithEmailAndPassword(auth, email, password)
+      .then( auth => {
+        if(auth){
+          navigate('/dashboard');
+        }
+      })
+      .catch( error => setUserExist(true));
+      // user-not-found
+    }else{
+      createUserWithEmailAndPassword(auth, email, password)
+      .then(
+        auth => {
+          if(auth){
+            navigate('/dashboard')
+          }
+        })
+        .catch( error => setIsEmailUsed(true));
+    }
   }
 
+  useEffect(()=>{
+    setUserExist(false);
+    setIsEmailUsed(false);
+  },[location])
   const emailOnChangeHandler = (e) => {
     setEmail(e.target.value)
   }
@@ -35,14 +56,21 @@ const Login = ({ page }) => {
         <h1 className="text-white">{ page ? 'Sign In' : 'Register'}</h1>
         <br/>
         <form>
-          <input className="form-control" value={email} onChange={emailOnChangeHandler} type="email" placeholder="Email"/>
           <input 
             className="form-control" 
+            value={email} 
+            onChange={emailOnChangeHandler} 
+            type="email" 
+            placeholder="Email"/>
+          <p className="text-danger">Email is not valid</p>
+          <input 
+            className="form-control"
             value={password} 
             onChange={(e)=>setPassword(e.target.value)} 
             type="password" 
             placeholder="Password"/>
-          <button className="btn btn-danger btn-block" onClick={onSignInClickHandler}>
+            <p className="text-danger">Password is not valid</p>
+          <button className="btn btn-danger btn-block" onClick={ctaClickHandler}>
             { page ? 'Sign In' : 'Register'}
           </button>
           <br/>
@@ -58,6 +86,7 @@ const Login = ({ page }) => {
         <br/>
         <br/>
         { isUserExist && <p className="text-danger">User does not exist | Go for Signup</p> }
+        { isEmailUsed && <p className="text-danger">Email already in use | Go for Sign In</p> }
         <div className="login-form-other">
           <div className="login-signup-now">
           { page ? 'New to Netflix?' : 'Existing User'} &nbsp;
