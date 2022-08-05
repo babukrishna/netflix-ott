@@ -34,10 +34,12 @@ function App() {
             <React.Fragment>
               <Header/>
               <Banner/>
-              <List title="Netflix Originals"/>
-              <List title="Trending Now"/>
-              <List title="Top Rated"/>
-              <List title="favourite"/>
+              <List title="Netflix Originals" param="originals"/>
+              <List title="Trending Now" param="trending"/>
+              <List title="Now Playing" param="now_playing"/>
+              <List title="popular" param="popular"/>
+              <List title="Top Rated" param="top_rated"/>
+              <List title="Upcoming" param="upcoming"/>
             </React.Fragment>
           }/>
         </Routes>
